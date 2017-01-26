@@ -4,6 +4,8 @@ include_once("../../config.php");
 
 global $CFG, $PAGE, $OUTPUT;
 
+$errorcode = optional_param('errorcode', 0, PARAM_INT); // login error code
+
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
 
@@ -26,6 +28,23 @@ $PAGE->set_url("$CFG->httpswwwroot/auth/saml/login.php");
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('login');
 
+// Set error message based on errorcode from login/index.php
+$errormsg = '';
+switch ($errorcode) {
+    case 0:
+        break;
+    case 1:
+        $errormsg = get_string('cookiesnotenabled');
+        break;
+    case 2:
+        $errormsg = get_string('username').': '.get_string('invalidusername');
+        break;
+    case 3:
+        $errormsg = get_string('invalidlogin');
+        break;
+    case 4:
+        $errormsg = get_string('sessionerroruser', 'error');
+}
 
 /// Define variables used in page
 $site = get_site();
