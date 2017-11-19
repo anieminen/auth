@@ -1,12 +1,12 @@
-<script src="../auth/saml/resources/moodle_saml.js" type="text/javascript"></script>
+<script src="resources/moodle_saml.js" type="text/javascript"></script>
 
-<link rel="stylesheet" type="text/css" href="../auth/saml/resources/ui.theme.css" />
-<link rel="stylesheet" type="text/css" href="../auth/saml/resources/ui.core.css" />
-<link rel="stylesheet" type="text/css" href="../auth/saml/resources/ui.tabs.css" />
-<link rel="stylesheet" type="text/css" href="../auth/saml/resources/moodle_saml.css" />
+<link rel="stylesheet" type="text/css" href="resources/ui.theme.css" />
+<link rel="stylesheet" type="text/css" href="resources/ui.core.css" />
+<link rel="stylesheet" type="text/css" href="resources/ui.tabs.css" />
+<link rel="stylesheet" type="text/css" href="resources/moodle_saml.css" />
 
-<script type="text/javascript" src="../auth/saml/resources/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="../auth/saml/resources/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="resources/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="resources/jquery-ui-1.7.2.custom.min.js"></script>
 
 
 <?php
@@ -25,6 +25,7 @@
  * 2008-10  Created
  * 2009-07  Added new configuration options
 **/
+require_once(__DIR__.'/../../config.php');
 
     global $CFG, $OUTPUT;
 

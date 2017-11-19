@@ -31,7 +31,7 @@ class auth_plugin_saml extends auth_plugin_base {
     */
     public function __construct() {
 		$this->authtype = 'saml';
-		$this->config = get_config('auth/saml');
+		$this->config = get_config('auth_saml');
     }
 
     /**
@@ -42,15 +42,15 @@ class auth_plugin_saml extends auth_plugin_base {
     * @param string $password The password (with system magic quotes)
     * @return bool Authentication success or failure.
     */
-    function user_login($username, $password) {
+    public function user_login($username, $password) {
         global $SESSION;
 	    // if true, user_login was initiated by saml/index.php
 	    if(isset($SESSION->auth_saml_login) && $SESSION->auth_saml_login) {
 	        unset($SESSION->auth_saml_login);
-	        return TRUE;
+	        return true;
 	    }
 
-	    return FALSE;
+	    return false;
     }
 
 
@@ -60,7 +60,7 @@ class auth_plugin_saml extends auth_plugin_base {
     *
     * @return array $result Associative array of user data
     */
-    function get_userinfo($username) {
+    public function get_userinfo($username) {
         global $SESSION;
 	    if($login_attributes = $SESSION->auth_saml_login_attributes) {
 	        $attributemap = $this->get_attributes();
@@ -80,13 +80,15 @@ class auth_plugin_saml extends auth_plugin_base {
 	        return $result;
 	    }
 
-	    return FALSE;
+        return false;
     }
 
     /*
-    * Returns array containg attribute mappings between Moodle and Identity Provider.
-    */
-    function get_attributes() {
+     * Returns user attribute mappings between Moodle and Identity Provider.
+     *
+     * @return array
+     */
+    public function get_attributes() {
         $configarray = (array) $this->config;
 
         if(isset($this->userfields)) {
@@ -116,7 +118,7 @@ class auth_plugin_saml extends auth_plugin_base {
     *
     * @return bool
     */
-    function is_internal() {
+    public function is_internal() {
 	    return false;
     }
 
@@ -126,11 +128,11 @@ class auth_plugin_saml extends auth_plugin_base {
     *
     * @return bool
     */
-    function can_change_password() {
+    public function can_change_password() {
 	    return false;
     }
 
-    function pre_loginpage_hook() {
+    public function pre_loginpage_hook() {
         // If Force Login is on then we can safely jump directly to the SAML IdP
         if (isset($this->config->autologin) && $this->config->autologin) {
             global $CFG, $SESSION;
@@ -139,7 +141,7 @@ class auth_plugin_saml extends auth_plugin_base {
         }
     }
 
-    function loginpage_hook() {
+    public function loginpage_hook() {
 	    global $CFG;
 
         if (empty($CFG->alternateloginurl) && !(isset($_GET['saml']) && $_GET['saml'] === 'false')) {
@@ -150,7 +152,7 @@ class auth_plugin_saml extends auth_plugin_base {
 	    $CFG->nolastloggedin = true;
     }
 
-    function logoutpage_hook() {
+    public function logoutpage_hook() {
         global $CFG;
 
 	    if(isset($this->config->dosinglelogout) && $this->config->dosinglelogout) {
@@ -169,7 +171,8 @@ class auth_plugin_saml extends auth_plugin_base {
     * @param array $page An object containing all the data for this page.
     */
 
-    function config_form($config, $err, $user_fields) {
+    /*
+    public function config_form($config, $err, $user_fields) {
 	    global $CFG, $DB;
 
         $dbman = $DB->get_manager();
@@ -198,11 +201,13 @@ class auth_plugin_saml extends auth_plugin_base {
 	    }
 	    require_once ($CFG->dirroot . "/auth/saml/config.php");
     }
+*/
 
     /**
      * A chance to validate form data, and last chance to
      * do stuff before it is inserted in config_plugin
      */
+    /*
     function validate_form($form, &$err) {
 
 	    if(!isset($form->auth_saml_db_reset) && !isset($form->initialize_roles)) {
@@ -291,13 +296,13 @@ class auth_plugin_saml extends auth_plugin_base {
             }
 	    }
     }
-
+*/
     /**
     * Processes and stores configuration data for this authentication plugin.
     *
-    *
     * @param object $config Configuration object
     */
+    /*
     function process_config($config) {
         global $err, $DB, $CFG;
 
@@ -538,7 +543,7 @@ class auth_plugin_saml extends auth_plugin_base {
 	    }
 	    return true;
     }
-
+*/
     /**
     * Cleans and returns first of potential many values (multi-valued attributes)
     *
