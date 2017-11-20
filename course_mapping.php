@@ -3,7 +3,7 @@
     $role_mapping = array();
     $course_mapping = array();
     try {
-        $config = get_config('auth/saml');
+        $config = get_config('auth_saml');
         require_once ("roles.php");
         require_once ("courses.php");
         $role_mapping = get_role_mapping_for_sync($err, $config);

@@ -14,7 +14,7 @@ if(isset($SESSION->wantsurl)) {
 }
 
 // if autologin is enabled redirect to the idp without showing the login form
-$saml_config = get_config('auth/saml');
+$saml_config = get_config('auth_saml');
 if(isset($saml_config->autologin)  && $saml_config->autologin)
 {
        header('Location: '.$samlUrl);
@@ -67,7 +67,7 @@ if (empty($CFG->xmlstrictheaders) and !empty($CFG->loginpasswordautocomplete)) {
 
 <?php
 
-$saml_config = get_config('auth/saml');
+$saml_config = get_config('auth_saml');
 $authsequence = get_enabled_auth_plugins(true);
 
 $frm = data_submitted();
