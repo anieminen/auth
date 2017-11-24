@@ -28,6 +28,14 @@ function xmldb_auth_saml_upgrade($oldversion) {
         // Convert info in config_plugins from auth/saml to auth_saml.
         upgrade_fix_config_auth_plugin_names('saml');
         upgrade_fix_config_auth_plugin_defaults('saml');
+
+        // Fix legacy values that were set as "on".
+        $pluginconfig = get_config('auth_saml');
+        foreach ($pluginconfig as $name => $value) {
+            if($value == 'on') {
+                set_config($name, 1, 'auth_saml');
+            }
+        }
         upgrade_plugin_savepoint(true, 2017111300, 'auth', 'saml');
     }
 

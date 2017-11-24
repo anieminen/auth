@@ -1,1 +1,1 @@
-{"samllib":"\/var\/www\/simplesamlphp\/lib","sp_source":"default-sp","dosinglelogout":"on"}
+{"samllib":"\/var\/www\/simplesamlphp\/lib","sp_source":"default-sp","dosinglelogout":1}
