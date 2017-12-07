@@ -36,148 +36,65 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-
-    global $CFG, $OUTPUT;
-
-    require_once("courses.php");
-    require_once("roles.php");
-
-    // Get saml paramters stored in the saml_config.php
-    if(file_exists($CFG->dataroot.'/saml_config.php')) {
-        $contentfile = file_get_contents($CFG->dataroot.'/saml_config.php');
-        $saml_param = json_decode($contentfile);
-    } else if (file_exists('saml_config.php')) {
-        $contentfile = file_get_contents('saml_config.php');
-        $saml_param = json_decode($contentfile);
-    } else {
-        $saml_param = new stdClass();
-    }
-
-    $config = get_config('auth_saml');
-    //var_dump($config);die;
-    //var_dump($saml_param);die;
-
-    // Set to defaults if undefined
-    if (!isset ($saml_param->samllib)) {
-        if (isset ($config->samllib)) {
-            $saml_param->samllib = $config->samllib;
-        } else {
-            $saml_param->samllib = '/var/www/sp/simplesamlphp/lib';
-        }
-    }
-    if (!isset ($saml_param->sp_source)) {
-        if(isset ($config->sp_source)) {
-            $saml_param->sp_source = $config->sp_source;
-        }
-        else {
-            $saml_param->sp_source = 'saml';
-        }
-    }
-    if (!isset ($saml_param->dosinglelogout)) {
-        if(isset ($config->dosinglelogout)) {
-            $saml_param->dosinglelogout = $config->dosinglelogout;
-        }
-        else {
-            $saml_param->dosinglelogout = false;
-        }
-    }
-    if (!isset ($config->username)) {
-        $config->username = 'eduPersonPrincipalName';
-    }
-    if (!isset ($config->notshowusername)) {
-        $config->notshowusername = 'none';
-    }
-    if (!isset ($config->supportcourses)) {
-        $config->supportcourses = 'nosupport';
-    }
-    if (!isset ($config->syncusersfrom)) {
-        $config->syncusersfrom = '';
-    }
-    if (!isset ($config->samlcourses)) {
-        $config->samlcourses = 'schacUserStatus';
-    }
-    if (!isset ($config->samllogoimage)) {
-        $config->samllogoimage = 'logo.gif';
-    }
-    if (!isset ($config->samllogoinfo)) {
-        $config->samllogoinfo = 'SAML login';
-    }
-    if (!isset ($config->autologin)) {
-        $config->autologin = false;
-    }
-    if (!isset ($config->samllogfile)) {
-        $config->samllogfile = '';
-    }
-    if (!isset ($config->samlhookfile)) {
-        $config->samlhookfile = $CFG->dirroot . '/auth/saml/custom_hook.php';
-    }
-    if (!isset ($config->moodlecoursefieldid)) {
-        $config->moodlecoursefieldid = 'shortname';
-    }
-    if (!isset ($config->ignoreinactivecourses)) {
-        $config->ignoreinactivecourses = true;
-    }
-    if (!isset ($config->externalcoursemappingdsn)) {
-        $config->externalcoursemappingdsn = '';
-    }
-    if (!isset ($config->externalrolemappingdsn)) {
-        $config->externalrolemappingdsn = '';
-    }
-    if (!isset ($config->externalcoursemappingsql)) {
-        $config->externalcoursemappingsql = '';
-    }
-    if (!isset ($config->externalrolemappingsql)) {
-        $config->externalrolemappingsql = '';
-    }
-
-    if (!isset ($config->disablejit)) {
-        $config->disablejit = false;
-    }
+    //require_once("courses.php");
+    //require_once("roles.php");
 
     // Introductory explanation.
     $settings->add(new admin_setting_heading('auth_saml/pluginname', '',
         new lang_string('auth_samldescription', 'auth_saml')));
 
-    // samllib folder.
+    // samllib path.
     $settings->add(new admin_setting_configtext('auth_saml/samllib', get_string('auth_saml_samllib', 'auth_saml'),
-        get_string('auth_saml_samllib_description', 'auth_saml') , $saml_param->samllib));
+        get_string('auth_saml_samllib_description', 'auth_saml'), '/var/www/simplesamlphp/lib', PARAM_RAW_TRIMMED));
 
     // sp_source.
     $settings->add(new admin_setting_configtext('auth_saml/sp_source', get_string('auth_saml_sp_source', 'auth_saml'),
-        get_string('auth_saml_sp_source_description', 'auth_saml') , $saml_param->sp_source));
+        get_string('auth_saml_sp_source_description', 'auth_saml'), 'default-sp', PARAM_RAW_TRIMMED));
 
     // username.
     $settings->add(new admin_setting_configtext('auth_saml/username', get_string('auth_saml_username', 'auth_saml'),
-        get_string('auth_saml_username_description', 'auth_saml') , $config->username));
+        get_string('auth_saml_username_description', 'auth_saml'), 'eduPersonPrincipalName', PARAM_RAW_TRIMMED));
 
     // dosinglelogout.
     $settings->add(new admin_setting_configcheckbox('auth_saml/dosinglelogout', get_string('auth_saml_dosinglelogout', 'auth_saml'),
-        get_string('auth_saml_dosinglelogout_description', 'auth_saml') , $saml_param->dosinglelogout));
+        get_string('auth_saml_dosinglelogout_description', 'auth_saml'), 1));
 
     // samllogoimage.
     $settings->add(new admin_setting_configtext('auth_saml/samllogoimage', get_string('auth_saml_logo_path', 'auth_saml'),
-        get_string('auth_saml_logo_path_description', 'auth_saml') , $config->samllogoimage));
+        get_string('auth_saml_logo_path_description', 'auth_saml'), 'logo.gif', PARAM_RAW_TRIMMED));
 
     // samllogoinfo.
     $settings->add(new admin_setting_configtextarea('auth_saml/samllogoinfo', get_string('auth_saml_logo_info', 'auth_saml'),
-        get_string('auth_saml_logo_info_description', 'auth_saml') , $config->samllogoinfo));
+        get_string('auth_saml_logo_info_description', 'auth_saml'), 'SAML login', PARAM_RAW));
 
     // autologin.
     $settings->add(new admin_setting_configcheckbox('auth_saml/autologin', get_string('auth_saml_autologin', 'auth_saml'),
-        get_string('auth_saml_autologin_description', 'auth_saml') , $config->autologin));
+        get_string('auth_saml_autologin_description', 'auth_saml'), 0));
 
     // samllogfile.
     $settings->add(new admin_setting_configtext('auth_saml/samllogfile', get_string('auth_saml_logfile', 'auth_saml'),
-        get_string('auth_saml_logfile_description', 'auth_saml') , $config->samllogfile));
+        get_string('auth_saml_logfile_description', 'auth_saml'), '', PARAM_RAW_TRIMMED));
 
     // samlhookfile.
     $settings->add(new admin_setting_configtext('auth_saml/samlhookfile', get_string('auth_saml_samlhookfile', 'auth_saml'),
-        get_string('auth_saml_samlhookfile_description', 'auth_saml') , $config->samlhookfile));
+        get_string('auth_saml_samlhookfile_description', 'auth_saml'), $CFG->dirroot . '/auth/saml/custom_hook.php', PARAM_RAW_TRIMMED));
 
     // disablejit.
     $settings->add(new admin_setting_configcheckbox('auth_saml/disablejit', get_string('auth_saml_disablejit', 'auth_saml'),
-        get_string('auth_saml_disablejit_description', 'auth_saml') , $config->disablejit));
+        get_string('auth_saml_disablejit_description', 'auth_saml'), 0));
 
+    // Sync users from another auth module.
+    $authmods = array();
+    $authmods[''] = 'Disabled';
+    foreach (get_enabled_auth_plugins() as $authname) {
+        $plugin = get_auth_plugin($authname);
+        if (method_exists($plugin, 'sync_users')) {
+            $authmods[$authname] = $authname;
+        }
+    }
+    $settings->add(new admin_setting_configselect('auth_saml/syncusersfrom',
+            get_string('auth_saml_syncusersfrom', 'auth_saml'),
+            get_string('auth_saml_syncusersfrom_description', 'auth_saml'), '', $authmods));
 
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin('saml');
